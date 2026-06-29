@@ -1,0 +1,140 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  .pf{font-family:'Inter',sans-serif;background:#ffffff;color:#1a1a2e;}
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;border-bottom:1px solid #e8e8f0;background:#fff;position:sticky;top:0;z-index:100;}
+  .nav-logo{display:flex;align-items:center;gap:8px;font-size:1.1rem;font-weight:700;color:#0f1f3d;}
+  .nav-logo .dot{width:8px;height:8px;background:#b8922a;border-radius:50%;}
+  .nav-links{display:flex;gap:1.8rem;list-style:none;}
+  .nav-links a{color:#6b7280;text-decoration:none;font-size:0.83rem;cursor:pointer;transition:color 0.2s;}
+  .nav-links a:hover{color:#b8922a;}
+  .nav-cta{background:#0f1f3d;border:none;color:#fff;padding:0.45rem 1.1rem;border-radius:6px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;}
+  .nav-cta:hover{background:#b8922a;}
+  .hero{padding:4.5rem 2.5rem 2.5rem;max-width:820px;margin:0 auto;text-align:center;}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#fdf6e8;border:1px solid #e8d49a;border-radius:100px;padding:0.28rem 0.9rem;font-size:0.73rem;color:#856422;margin-bottom:1.8rem;animation:fadeUp 0.5s ease both;}
+  .dot-pulse{width:6px;height:6px;background:#b8922a;border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  .hero h1{font-size:clamp(1.8rem,4.5vw,2.7rem);font-weight:700;line-height:1.18;color:#0f1f3d;animation:fadeUp 0.6s 0.1s ease both;margin-bottom:1rem;}
+  .hero h1 span{color:#b8922a;}
+  .hero p{font-size:0.95rem;color:#6b7280;line-height:1.75;max-width:520px;margin:0 auto 2rem;animation:fadeUp 0.6s 0.2s ease both;}
+  .btns{display:flex;gap:0.9rem;justify-content:center;animation:fadeUp 0.6s 0.3s ease both;}
+  .btn-p{background:#0f1f3d;color:#fff;border:none;padding:0.72rem 1.6rem;border-radius:8px;font-weight:600;font-size:0.87rem;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;}
+  .btn-p:hover{background:#b8922a;}
+  .btn-g{background:#fff;color:#374151;border:1px solid #d1d5db;padding:0.72rem 1.6rem;border-radius:8px;font-weight:500;font-size:0.87rem;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;}
+  .btn-g:hover{border-color:#b8922a;color:#b8922a;}
+  .stats{display:flex;justify-content:center;gap:2.5rem;padding:2rem 2.5rem 2.5rem;border-bottom:1px solid #e8e8f0;}
+  .stat{text-align:center;}
+  .stat-n{font-size:1.7rem;font-weight:700;color:#b8922a;}
+  .stat-l{font-size:0.72rem;color:#9ca3af;margin-top:2px;}
+  .sdiv{width:1px;background:#e8e8f0;align-self:stretch;}
+  .sec{padding:2.8rem 2.5rem;max-width:900px;margin:0 auto;}
+  .sec-lbl{font-size:0.68rem;letter-spacing:0.15em;color:#b8922a;text-transform:uppercase;margin-bottom:0.5rem;}
+  .sec-ttl{font-size:1.4rem;font-weight:700;color:#0f1f3d;margin-bottom:1.8rem;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;}
+  .card{background:#f9fafb;border:1px solid #e8e8f0;border-radius:12px;padding:1.4rem;transition:all 0.22s;cursor:default;}
+  .card:hover{border-color:#b8922a;background:#fffbf2;transform:translateY(-2px);}
+  .c-icon{font-size:1.4rem;color:#0f1f3d;margin-bottom:0.7rem;}
+  .c-ttl{font-size:0.92rem;font-weight:600;color:#1f2937;margin-bottom:0.35rem;}
+  .c-desc{font-size:0.78rem;color:#9ca3af;line-height:1.6;}
+  .tags{display:flex;flex-wrap:wrap;gap:0.5rem;}
+  .tag{background:#fdf6e8;border:1px solid #e8d49a;color:#856422;padding:0.3rem 0.85rem;border-radius:100px;font-size:0.76rem;font-weight:500;}
+  .tag.blue{background:#eef2ff;border-color:#c7d2fe;color:#3730a3;}
+  .cta-box{background:#0f1f3d;border-radius:14px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;}
+  .cta-box h3{font-size:1.05rem;font-weight:600;color:#f0f2ff;margin-bottom:0.3rem;}
+  .cta-box p{font-size:0.8rem;color:#6b7a99;}
+  .footer{padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e8e8f0;}
+  .footer-logo{font-size:0.9rem;font-weight:700;color:#0f1f3d;display:flex;align-items:center;gap:6px;}
+  .footer-logo .dot{width:6px;height:6px;background:#b8922a;border-radius:50%;}
+  .footer-copy{font-size:0.73rem;color:#d1d5db;}
+  hr.div{border:none;border-top:1px solid #e8e8f0;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease;}
+  .reveal.on{opacity:1;transform:translateY(0);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+</style>
+
+<div class="pf">
+  <nav class="nav">
+    <div class="nav-logo"><div class="dot"></div>TechCentral</div>
+    <ul class="nav-links">
+      <li><a onclick="goto('sv')">Diensten</a></li>
+      <li><a onclick="goto('sk')">Skills</a></li>
+      <li><a onclick="goto('ct')">Contact</a></li>
+    </ul>
+    <button class="nav-cta">Offerte aanvragen</button>
+  </nav>
+
+  <section class="hero">
+    <div class="badge"><div class="dot-pulse"></div>Beschikbaar voor projecten</div>
+    <h1>Jouw ICT-problemen<br><span>centraal opgelost</span></h1>
+    <p>Van websites tot servers en netwerken — TechCentral helpt bedrijven en particulieren met professionele ICT-oplossingen. Betrouwbaar, snel en betaalbaar.</p>
+    <div class="btns">
+      <button class="btn-p" onclick="goto('sv')">Bekijk onze diensten</button>
+      <button class="btn-g" onclick="goto('ct')">Neem contact op →</button>
+    </div>
+  </section>
+
+  <div class="stats reveal" id="sts">
+    <div class="stat"><div class="stat-n" id="c1">0</div><div class="stat-l">Projecten afgerond</div></div>
+    <div class="sdiv"></div>
+    <div class="stat"><div class="stat-n" id="c2">0</div><div class="stat-l">Tevreden klanten</div></div>
+    <div class="sdiv"></div>
+    <div class="stat"><div class="stat-n" id="c3">0+</div><div class="stat-l">Jaar ervaring</div></div>
+  </div>
+
+  <hr class="div">
+
+  <section class="sec reveal" id="sv">
+    <div class="sec-lbl">Diensten</div>
+    <div class="sec-ttl">Wat TechCentral voor jou doet</div>
+    <div class="grid">
+      <div class="card"><div class="c-icon"><i class="ti ti-world" aria-hidden="true"></i></div><div class="c-ttl">Websites bouwen</div><div class="c-desc">Moderne, snelle websites op maat — van portfolio's tot zakelijke sites.</div></div>
+      <div class="card"><div class="c-icon"><i class="ti ti-server" aria-hidden="true"></i></div><div class="c-ttl">Hosting & servers</div><div class="c-desc">Betrouwbare hosting op eigen servers. Snel, veilig en altijd online.</div></div>
+      <div class="card"><div class="c-icon"><i class="ti ti-tool" aria-hidden="true"></i></div><div class="c-ttl">IT-support</div><div class="c-desc">Computer problemen? Netwerk traag? Wij lossen het snel op.</div></div>
+      <div class="card"><div class="c-icon"><i class="ti ti-shield" aria-hidden="true"></i></div><div class="c-ttl">Netwerk & beveiliging</div><div class="c-desc">Veilige netwerken en beveiliging voor thuis en op kantoor.</div></div>
+    </div>
+  </section>
+
+  <hr class="div">
+
+  <section class="sec reveal" id="sk">
+    <div class="sec-lbl">Technologie</div>
+    <div class="sec-ttl">Onze skills</div>
+    <div class="tags">
+      <span class="tag">Raspberry Pi</span>
+      <span class="tag">Linux</span>
+      <span class="tag">Python</span>
+      <span class="tag">Home Server</span>
+      <span class="tag">Netwerken</span>
+      <span class="tag blue">HTML / CSS</span>
+      <span class="tag blue">JavaScript</span>
+      <span class="tag blue">Webdesign</span>
+    </div>
+  </section>
+
+  <hr class="div">
+
+  <section class="sec reveal" id="ct">
+    <div class="cta-box">
+      <div><h3>Klaar om samen te werken?</h3><p>Vertel ons over je project en we sturen je vrijblijvend een offerte.</p></div>
+      <button class="btn-p" style="white-space:nowrap;">Stuur een bericht →</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-logo"><div class="dot"></div>TechCentral</div>
+    <div class="footer-copy">© 2026 TechCentral · Urk</div>
+  </footer>
+</div>
+
+<script>
+  function goto(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});}
+  const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('on');if(x.target.id==='sts')count();}});},{threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+  function count(){
+    [{id:'c1',end:12},{id:'c2',end:8},{id:'c3',end:3,plus:true}].forEach(({id,end,plus})=>{
+      const el=document.getElementById(id);let cur=0;
+      const t=setInterval(()=>{cur=Math.min(cur+end/30,end);el.textContent=Math.round(cur)+(plus?'+':'');if(cur>=end)clearInterval(t);},40);
+    });
+  }
+</script>
