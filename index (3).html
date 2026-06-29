@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuietHomeServer — Jasper | Linux · Servers · Netwerken</title>
+  <meta name="description" content="Jasper — ICT-enthousiasteling. Ik deel mijn projecten, leerproces en experimenten op het gebied van Linux, servers, netwerken en webdevelopment. Volg me op TikTok als @quiethomeserver.">
+  <meta name="keywords" content="QuietHomeServer, homelab, Linux, self-hosting, netwerken, systeembeheer, ICT portfolio">
+  <meta property="og:title" content="QuietHomeServer — Jasper">
+  <meta property="og:description" content="Linux · Servers · Netwerken · Self-Hosting">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Person",
+    "name":"Jasper",
+    "url":"https://github.com/TechCentralNL",
+    "description":"ICT-enthousiasteling gespecialiseerd in Linux, servers en netwerken",
+    "sameAs":["https://www.tiktok.com/@quiethomeserver","https://github.com/TechCentralNL"]
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f5f0e8;
+      --bg2:      #ede8de;
+      --bg3:      #e4ddd0;
+      --surface:  #faf7f2;
+      --gold:     #9a7c3a;
+      --gold-lt:  #c4a45a;
+      --gold-dim: #7a6030;
+      --green:    #5a7a52;
+      --text:     #1c1a16;
+      --text2:    #3d3828;
+      --muted:    #7a7060;
+      --border:   rgba(120,100,60,0.15);
+      --border2:  rgba(120,100,60,0.25);
+      --card:     rgba(255,252,245,0.85);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font:     'Inter', sans-serif;
+      --mono:     'JetBrains Mono', monospace;
+      --radius:   4px;
+      --radius-lg: 8px;
+      --transition: 0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      overflow-x: hidden;
+      font-size: 15px;
+    }
+
+    /* ── BUBBLE TRANSITION ── */
+    #bubble-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none; overflow: hidden;
+    }
+    .bubble-circle {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-lt) 0%, var(--bg2) 70%, transparent 100%);
+      transform: scale(0); opacity: 0; transition: none;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem; height: 60px;
+      background: rgba(245,240,232,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.3rem; font-weight: 600;
+      color: var(--text); text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+    .nav-logo em { color: var(--gold); font-style: normal; }
+
+    .nav-links { display: flex; gap: 0; list-style: none; }
+    .nav-links a {
+      display: block; padding: 0.4rem 0.9rem;
+      color: var(--muted); text-decoration: none;
+      font-size: 0.8rem; font-weight: 400; letter-spacing: 0.04em;
+      text-transform: uppercase; transition: var(--transition);
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a.active { color: var(--gold); }
+
+    .nav-cta {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--gold);
+      border-radius: var(--radius);
+      color: var(--gold); text-decoration: none;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em;
+      text-transform: uppercase; transition: var(--transition);
+    }
+    .nav-cta:hover { background: var(--gold); color: #fff; }
+
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 4px;
+    }
+    .hamburger span { display: block; width: 20px; height: 1.5px; background: var(--text); }
+
+    /* ── PAGES ── */
+    .page { display: none; min-height: 100vh; padding-top: 60px; }
+    .page.active { display: block; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: calc(100vh - 60px);
+      display: flex; align-items: center;
+      padding: 4rem 2.5rem;
+      position: relative;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+
+    .hero-label {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-label::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 600; line-height: 1.05;
+      letter-spacing: -0.01em; margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-desc {
+      color: var(--muted); font-size: 0.95rem;
+      line-height: 1.8; margin-bottom: 2.5rem; max-width: 400px;
+    }
+
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn-gold {
+      padding: 0.65rem 1.75rem;
+      background: var(--gold); color: #fff;
+      border: none; border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; transition: var(--transition); text-decoration: none;
+    }
+    .btn-gold:hover { background: var(--gold-dim); }
+
+    .btn-outline {
+      padding: 0.65rem 1.75rem;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; transition: var(--transition); text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-right { display: flex; flex-direction: column; gap: 1px; }
+
+    .hero-stat {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .hero-stat:first-child { border-top: 1px solid var(--border); }
+    .stat-n {
+      font-family: var(--font-serif); font-size: 2.5rem;
+      font-weight: 500; color: var(--gold);
+    }
+    .stat-l { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px; background: var(--border2);
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 2.5rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .sec-eyebrow {
+      font-family: var(--mono); font-size: 0.68rem;
+      color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+    }
+    .sec-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 600; letter-spacing: -0.01em;
+      margin-bottom: 0.75rem; color: var(--text);
+    }
+    .sec-desc { color: var(--muted); font-size: 0.9rem; max-width: 520px; line-height: 1.8; }
+    .sec-header { margin-bottom: 3.5rem; }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; align-items: start; }
+
+    .about-body p { color: var(--muted); margin-bottom: 1.1rem; line-height: 1.85; font-size: 0.9rem; }
+    .about-body p strong { color: var(--text2); font-weight: 500; }
+
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-lg);
+    }
+    .about-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .about-row:last-child { border-bottom: none; }
+    .about-key { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .about-val { font-size: 0.875rem; font-weight: 500; color: var(--text2); }
+
+    .timeline { margin-top: 2.5rem; }
+    .tl-item { display: grid; grid-template-columns: 90px 1fr; gap: 1.5rem; padding-bottom: 2rem; }
+    .tl-date { font-family: var(--mono); font-size: 0.68rem; color: var(--gold); padding-top: 0.1rem; }
+    .tl-title { font-weight: 500; font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--text2); }
+    .tl-desc { font-size: 0.825rem; color: var(--muted); line-height: 1.75; }
+
+    /* ── SKILLS ── */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; border: 1px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; }
+
+    .skill-cell {
+      background: var(--card); padding: 1.5rem;
+      transition: var(--transition);
+    }
+    .skill-cell:hover { background: var(--bg2); }
+
+    .skill-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .skill-name { font-size: 0.875rem; font-weight: 500; color: var(--text2); }
+    .skill-pct { font-family: var(--mono); font-size: 0.7rem; color: var(--gold); }
+
+    .bar-track { height: 2px; background: var(--border2); border-radius: 1px; overflow: hidden; }
+    .bar-fill {
+      height: 100%; background: var(--gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .bar-fill.go { transform: scaleX(1); }
+
+    .learning-section { margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--border2); }
+    .learning-label { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.25rem; }
+    .learning-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .pill {
+      padding: 0.35rem 0.85rem;
+      border: 1px solid var(--border2);
+      border-radius: 100px;
+      font-size: 0.78rem; color: var(--muted);
+      background: var(--card);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold-lt); }
+
+    /* ── PROJECTS ── */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+    .proj-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: var(--radius-lg); overflow: hidden;
+      transition: var(--transition);
+    }
+    .proj-card:hover { border-color: var(--gold); box-shadow: 0 4px 24px rgba(120,100,60,0.1); }
+
+    .proj-top {
+      height: 140px; background: var(--bg2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .proj-body { padding: 1.5rem; }
+    .proj-status {
+      font-family: var(--mono); font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+    }
+    .s-done { color: var(--green); }
+    .s-wip { color: var(--gold); }
+
+    .proj-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text2); }
+    .proj-desc { font-size: 0.825rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.75; }
+
+    .proj-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .proj-tag {
+      font-family: var(--mono); font-size: 0.65rem;
+      padding: 0.15rem 0.55rem;
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 2px; color: var(--muted);
+    }
+
+    .upload-zone {
+      margin-top: 2rem; padding: 2.5rem;
+      border: 1px dashed var(--border2);
+      border-radius: var(--radius-lg);
+      text-align: center; cursor: pointer;
+      transition: var(--transition);
+    }
+    .upload-zone:hover { border-color: var(--gold); background: rgba(154,124,58,0.03); }
+    .upload-zone p { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+    .upload-zone strong { color: var(--gold); font-weight: 500; }
+
+    /* ── LEARNING LOG ── */
+    .log-list { max-width: 680px; }
+    .log-entry {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: 2rem; padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .log-entry.vis { opacity: 1; transform: none; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-date { font-family: var(--mono); font-size: 0.68rem; color: var(--gold); padding-top: 0.15rem; }
+    .log-title { font-weight: 500; font-size: 0.9rem; margin-bottom: 0.4rem; color: var(--text2); }
+    .log-desc { font-size: 0.825rem; color: var(--muted); line-height: 1.8; margin-bottom: 0.75rem; }
+    .log-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .log-tag { font-family: var(--mono); font-size: 0.65rem; padding: 0.1rem 0.45rem; background: var(--bg2); border-radius: 2px; color: var(--muted); }
+
+    /* ── TIKTOK ── */
+    .tt-hero { text-align: center; padding: 5rem 2rem 3rem; border-bottom: 1px solid var(--border2); }
+    .tt-logo {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: #000; display: flex; align-items: center;
+      justify-content: center; font-size: 2rem;
+      margin: 0 auto 1.5rem;
+    }
+    .tt-handle { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .tt-handle span { color: var(--text); }
+    .tt-name { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .tt-bio { color: var(--muted); max-width: 440px; margin: 0 auto 2rem; font-size: 0.9rem; line-height: 1.8; }
+    .btn-tt {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.75rem 2rem; background: #000; color: #fff;
+      border: none; border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; transition: var(--transition);
+    }
+    .btn-tt:hover { background: #222; }
+
+    .tt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 4rem; }
+    .tt-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: var(--radius-lg); padding: 1.75rem;
+      transition: var(--transition);
+    }
+    .tt-card:hover { border-color: var(--gold); }
+    .tt-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+    .tt-card-title { font-weight: 500; font-size: 0.875rem; margin-bottom: 0.35rem; color: var(--text2); }
+    .tt-card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── GITHUB ── */
+    .gh-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; border: 1px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 3rem; }
+    .gh-stat { background: var(--card); padding: 1.5rem; }
+    .gh-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 600; color: var(--gold); }
+    .gh-lbl { font-size: 0.775rem; color: var(--muted); margin-top: 0.2rem; }
+
+    .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .repo-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+      text-decoration: none; display: block; transition: var(--transition);
+    }
+    .repo-card:hover { border-color: var(--gold); }
+    .repo-name { font-size: 0.875rem; font-weight: 500; color: var(--gold); margin-bottom: 0.5rem; }
+    .repo-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+    .repo-meta { display: flex; gap: 1rem; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+    .ldot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; vertical-align: middle; margin-right: 3px; }
+
+    /* ── CONTACT STRIP ── */
+    .contact-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(245,240,232,0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border2);
+      padding: 0.65rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .cs-text { font-size: 0.78rem; color: var(--muted); }
+    .cs-text a { color: var(--gold); text-decoration: none; }
+    .cs-form { display: flex; gap: 0.5rem; align-items: center; }
+    .cs-input {
+      padding: 0.4rem 0.85rem;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: var(--radius); color: var(--text);
+      font-family: var(--font); font-size: 0.78rem; width: 220px;
+      transition: var(--transition);
+    }
+    .cs-input:focus { outline: none; border-color: var(--gold); }
+    .cs-input::placeholder { color: var(--muted); }
+    .cs-btn {
+      padding: 0.4rem 1rem; background: var(--gold); color: #fff;
+      border: none; border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: var(--transition); white-space: nowrap;
+    }
+    .cs-btn:hover { background: var(--gold-dim); }
+    .cs-ok { font-size: 0.78rem; color: var(--green); display: none; font-family: var(--mono); }
+
+    .pb { padding-bottom: 64px; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.vis { opacity: 1; transform: none; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-right { display: none; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .cs-form { display: none; }
+
+      .mob-menu {
+        position: fixed; top: 60px; left: 0; right: 0;
+        background: rgba(245,240,232,0.98);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border2);
+        padding: 1rem; display: flex; flex-direction: column; gap: 0.25rem;
+        z-index: 99; transform: translateY(-110%); transition: transform 0.3s ease;
+      }
+      .mob-menu.open { transform: none; }
+      .mob-menu a {
+        padding: 0.65rem 1rem; color: var(--muted);
+        text-decoration: none; font-size: 0.85rem;
+        border-radius: var(--radius); transition: var(--transition);
+      }
+      .mob-menu a:hover { background: var(--bg2); color: var(--text); }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<div id="bubble-overlay"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" onclick="go('home');return false;">Quiet<em>Home</em>Server</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="go('home');return false;" data-p="home" class="active">Home</a></li>
+    <li><a href="#" onclick="go('about');return false;" data-p="about">Over mij</a></li>
+    <li><a href="#" onclick="go('skills');return false;" data-p="skills">Skills</a></li>
+    <li><a href="#" onclick="go('projects');return false;" data-p="projects">Projecten</a></li>
+    <li><a href="#" onclick="go('learning');return false;" data-p="learning">Leerproces</a></li>
+    <li><a href="#" onclick="go('tiktok');return false;" data-p="tiktok">TikTok</a></li>
+    <li><a href="#" onclick="go('github');return false;" data-p="github">GitHub</a></li>
+  </ul>
+  <a href="https://www.tiktok.com/@quiethomeserver" target="_blank" class="nav-cta">▶ TikTok</a>
+  <button class="hamburger" onclick="toggleMob()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mob-menu" id="mobMenu">
+  <a href="#" onclick="go('home');toggleMob();return false;">Home</a>
+  <a href="#" onclick="go('about');toggleMob();return false;">Over mij</a>
+  <a href="#" onclick="go('skills');toggleMob();return false;">Skills</a>
+  <a href="#" onclick="go('projects');toggleMob();return false;">Projecten</a>
+  <a href="#" onclick="go('learning');toggleMob();return false;">Leerproces</a>
+  <a href="#" onclick="go('tiktok');toggleMob();return false;">TikTok</a>
+  <a href="#" onclick="go('github');toggleMob();return false;">GitHub</a>
+</div>
+
+<!-- ═══ HOME ═══ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-label">ICT Portfolio</div>
+        <h1 class="hero-title">Hoi, ik ben<br><em>Jasper</em></h1>
+        <p class="hero-desc">Ik bouw servers, configureer netwerken en leer elke dag iets nieuws op het gebied van Linux en webdevelopment. Dit is mijn portfolio.</p>
+        <div class="hero-btns">
+          <button class="btn-gold" onclick="go('projects')">Bekijk projecten</button>
+          <button class="btn-outline" onclick="go('tiktok')">@quiethomeserver</button>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat">
+          <span class="stat-l">Focus</span>
+          <span class="stat-n" style="font-size:1.2rem;letter-spacing:-.01em">Linux · Servers · Netwerken</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-l">Status</span>
+          <span class="stat-n" style="font-size:1rem;color:var(--green)">Actief lerend</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-l">TikTok</span>
+          <span class="stat-n" style="font-size:1rem">@quiethomeserver</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-l">GitHub</span>
+          <span class="stat-n" style="font-size:1rem">TechCentralNL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<div class="page pb" id="page-about">
+  <section>
+    <div class="container">
+      <div class="sec-header reveal">
+        <p class="sec-eyebrow">Over mij</p>
+        <h2 class="sec-title">Wie ben ik?</h2>
+        <p class="sec-desc">Een ICT-enthousiasteling die elke dag iets nieuws leert en dat ook deelt.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-body">
+          <p>Hoi! Ik ben <strong>Jasper</strong>. Ik ben gefascineerd door alles wat met ICT te maken heeft — van Linux-servers draaien thuis tot netwerken opzetten en webpagina's bouwen.</p>
+          <p>Ik leer dit allemaal <strong>zelfstandig</strong>, door te proberen, te falen en het opnieuw te proberen. Op TikTok als <strong>@quiethomeserver</strong> deel ik mijn projecten en experimenten met anderen die dezelfde interesse hebben.</p>
+          <p>Mijn doel is om professioneel actief te worden in de ICT — als systeembeheerder, netwerkbeheerder of iets anders met Linux en servers. Stap voor stap bouw ik aan die toekomst.</p>
+
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-date">2024</div>
+              <div>
+                <div class="tl-title">Eerste Linux-installatie</div>
+                <div class="tl-desc">Begonnen met Ubuntu. Van "wat is een terminal?" naar comfortabel werken in de command line.</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">2024</div>
+              <div>
+                <div class="tl-title">Eigen homeserver opgebouwd</div>
+                <div class="tl-desc">Server thuis draaien, eerste services gehost, netwerk geconfigureerd.</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">2025</div>
+              <div>
+                <div class="tl-title">TikTok: @quiethomeserver</div>
+                <div class="tl-desc">Begonnen met documenteren van mijn leerproces voor een groter publiek.</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Nu</div>
+              <div>
+                <div class="tl-title">Webdevelopment & programmeren</div>
+                <div class="tl-desc">Actief bezig met HTML, CSS, JavaScript en Python.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="about-card">
+            <div class="about-row"><span class="about-key">Naam</span><span class="about-val">Jasper</span></div>
+            <div class="about-row"><span class="about-key">Focus</span><span class="about-val">Linux · Servers · Netwerken</span></div>
+            <div class="about-row"><span class="about-key">TikTok</span><span class="about-val" style="color:var(--gold)">@quiethomeserver</span></div>
+            <div class="about-row"><span class="about-key">GitHub</span><span class="about-val" style="color:var(--gold)">TechCentralNL</span></div>
+            <div class="about-row"><span class="about-key">Status</span><span class="about-val" style="color:var(--green)">Actief lerend</span></div>
+            <div class="about-row"><span class="about-key">Beschikbaar</span><span class="about-val">Stage / Samenwerking</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ SKILLS ═══ -->
+<div class="page pb" id="page-skills">
+  <section>
+    <div class="container">
+      <div class="sec-header reveal">
+        <p class="sec-eyebrow">Skills</p>
+        <h2 class="sec-title">Wat ik kan</h2>
+        <p class="sec-desc">Eerlijk overzicht van mijn kennis. Geen opgeblazen claims.</p>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">Linux</span><span class="skill-pct">90%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.9"></div></div>
+        </div>
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">Netwerken</span><span class="skill-pct">85%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.85"></div></div>
+        </div>
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">Windows</span><span class="skill-pct">85%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.85"></div></div>
+        </div>
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">Servers & Hosting</span><span class="skill-pct">80%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.80"></div></div>
+        </div>
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">HTML</span><span class="skill-pct">80%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.80"></div></div>
+        </div>
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">CSS</span><span class="skill-pct">75%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.75"></div></div>
+        </div>
+        <div class="skill-cell reveal">
+          <div class="skill-top"><span class="skill-name">Git & GitHub</span><span class="skill-pct">70%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="0.70"></div></div>
+        </div>
+      </div>
+
+      <div class="learning-section reveal">
+        <p class="learning-label">Momenteel aan het leren</p>
+        <div class="learning-pills">
+          <div class="pill"><span class="pill-dot"></span> JavaScript</div>
+          <div class="pill"><span class="pill-dot"></span> Python</div>
+          <div class="pill"><span class="pill-dot"></span> PHP</div>
+          <div class="pill"><span class="pill-dot"></span> SQL</div>
+          <div class="pill"><span class="pill-dot"></span> Docker</div>
+          <div class="pill"><span class="pill-dot"></span> TypeScript</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ PROJECTS ═══ -->
+<div class="page pb" id="page-projects">
+  <section>
+    <div class="container">
+      <div class="sec-header reveal">
+        <p class="sec-eyebrow">Projecten</p>
+        <h2 class="sec-title">Wat ik heb gebouwd</h2>
+        <p class="sec-desc">Dingen die ik heb gemaakt, geconfigureerd of waar ik aan werk.</p>
+      </div>
+
+      <div class="projects-grid">
+        <div class="proj-card reveal">
+          <div class="proj-top">🖥️</div>
+          <div class="proj-body">
+            <p class="proj-status s-done">● Afgerond</p>
+            <h3 class="proj-title">Linux Homeserver</h3>
+            <p class="proj-desc">Eigen server thuis opgezet met Ubuntu Server. Services gehost, SSH geconfigureerd en netwerk beheerd.</p>
+            <div class="proj-tags">
+              <span class="proj-tag">Ubuntu</span>
+              <span class="proj-tag">SSH</span>
+              <span class="proj-tag">Nginx</span>
+              <span class="proj-tag">Linux</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card reveal">
+          <div class="proj-top">🌐</div>
+          <div class="proj-body">
+            <p class="proj-status s-wip">◌ In ontwikkeling</p>
+            <h3 class="proj-title">Portfolio Website</h3>
+            <p class="proj-desc">Deze website. Gebouwd met HTML, CSS en JavaScript zonder frameworks. Inclusief animaties en SEO.</p>
+            <div class="proj-tags">
+              <span class="proj-tag">HTML</span>
+              <span class="proj-tag">CSS</span>
+              <span class="proj-tag">JavaScript</span>
+              <span class="proj-tag">GitHub Pages</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-card reveal">
+          <div class="proj-top">🔒</div>
+          <div class="proj-body">
+            <p class="proj-status s-done">● Afgerond</p>
+            <h3 class="proj-title">Thuisnetwerk beveiliging</h3>
+            <p class="proj-desc">Thuisnetwerk volledig opnieuw geconfigureerd. Firewall, VPN en netwerksegmentatie toegevoegd.</p>
+            <div class="proj-tags">
+              <span class="proj-tag">Firewall</span>
+              <span class="proj-tag">VPN</span>
+              <span class="proj-tag">DNS</span>
+              <span class="proj-tag">VLAN</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-zone reveal" onclick="alert('Koppel dit aan je homeserver backend om projecten toe te voegen.')">
+        <div style="font-size:1.5rem">📤</div>
+        <p><strong>Voeg een project toe</strong> — klik om te uploaden</p>
+        <p>Screenshots, beschrijvingen en GitHub links</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ LEARNING ═══ -->
+<div class="page pb" id="page-learning">
+  <section>
+    <div class="container">
+      <div class="sec-header reveal">
+        <p class="sec-eyebrow">Leerproces</p>
+        <h2 class="sec-title">Wat ik heb geleerd</h2>
+        <p class="sec-desc">Alles stap voor stap bijgehouden.</p>
+      </div>
+
+      <div class="log-list">
+        <div class="log-entry">
+          <div class="log-date">Juni 2025</div>
+          <div>
+            <div class="log-title">Portfolio website gebouwd</div>
+            <div class="log-desc">Eerste serieuze webpagina gebouwd vanuit scratch met HTML, CSS en JavaScript. Geleerd hoe CSS-animaties werken en hoe je een professionele portfolio opzet.</div>
+            <div class="log-tags"><span class="log-tag">HTML</span><span class="log-tag">CSS</span><span class="log-tag">JS</span><span class="log-tag">SEO</span></div>
+          </div>
+        </div>
+        <div class="log-entry">
+          <div class="log-date">Mei 2025</div>
+          <div>
+            <div class="log-title">TikTok gestart: @quiethomeserver</div>
+            <div class="log-desc">Begonnen met het delen van ICT-projecten op TikTok. Geleerd hoe je technische content toegankelijk maakt voor een breed publiek.</div>
+            <div class="log-tags"><span class="log-tag">Content</span><span class="log-tag">TikTok</span></div>
+          </div>
+        </div>
+        <div class="log-entry">
+          <div class="log-date">2024–2025</div>
+          <div>
+            <div class="log-title">Linux Server opgezet</div>
+            <div class="log-desc">Eigen homeserver thuis draaien op Ubuntu. SSH, Nginx, services en back-ups geconfigureerd. Veel geleerd van fouten maken.</div>
+            <div class="log-tags"><span class="log-tag">Linux</span><span class="log-tag">Ubuntu</span><span class="log-tag">SSH</span><span class="log-tag">Nginx</span></div>
+          </div>
+        </div>
+        <div class="log-entry">
+          <div class="log-date">2024</div>
+          <div>
+            <div class="log-title">Netwerk geconfigureerd</div>
+            <div class="log-desc">Thuisnetwerk volledig opnieuw opgezet. Firewall, DNS en VPN ingesteld. Geleerd hoe subnetten en routering werkt.</div>
+            <div class="log-tags"><span class="log-tag">Netwerken</span><span class="log-tag">DNS</span><span class="log-tag">VPN</span><span class="log-tag">Firewall</span></div>
+          </div>
+        </div>
+        <div class="log-entry">
+          <div class="log-date">Nu →</div>
+          <div>
+            <div class="log-title">JavaScript & Python</div>
+            <div class="log-desc">Actief aan het leren. JavaScript voor de website, Python voor automatisering en scripts.</div>
+            <div class="log-tags"><span class="log-tag">JavaScript</span><span class="log-tag">Python</span><span class="log-tag">Bezig</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ TIKTOK ═══ -->
+<div class="page pb" id="page-tiktok">
+  <div class="tt-hero reveal">
+    <div class="tt-logo">📱</div>
+    <p class="tt-handle">TikTok — <span>@quiethomeserver</span></p>
+    <h2 class="tt-name">QuietHomeServer</h2>
+    <p class="tt-bio">Ik deel mijn ICT-projecten, experimenten en leerproces. Van Linux-servers tot netwerken — alles wat ik bouw, documenteer ik.</p>
+    <a href="https://www.tiktok.com/@quiethomeserver" target="_blank" class="btn-tt">▶ Volg @quiethomeserver</a>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="sec-header reveal" style="text-align:center">
+        <p class="sec-eyebrow">Content</p>
+        <h2 class="sec-title">Wat je kunt verwachten</h2>
+      </div>
+      <div class="tt-grid">
+        <div class="tt-card reveal"><div class="tt-icon">🐧</div><div class="tt-card-title">Linux tips</div><div class="tt-card-desc">Handige commando's, tricks en uitleg.</div></div>
+        <div class="tt-card reveal"><div class="tt-icon">🖥️</div><div class="tt-card-title">Serverprojecten</div><div class="tt-card-desc">Eigen services hosten en beheren vanuit huis.</div></div>
+        <div class="tt-card reveal"><div class="tt-icon">🔒</div><div class="tt-card-title">Netwerken</div><div class="tt-card-desc">VPN, DNS, firewall in de praktijk.</div></div>
+        <div class="tt-card reveal"><div class="tt-icon">📈</div><div class="tt-card-title">Leerproces</div><div class="tt-card-desc">Eerlijk documenteren, inclusief de fouten.</div></div>
+        <div class="tt-card reveal"><div class="tt-icon">⚙️</div><div class="tt-card-title">Experimenten</div><div class="tt-card-desc">Nieuwe dingen uitproberen — soms lukt het.</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ GITHUB ═══ -->
+<div class="page pb" id="page-github">
+  <section>
+    <div class="container">
+      <div class="sec-header reveal">
+        <p class="sec-eyebrow">GitHub</p>
+        <h2 class="sec-title">TechCentralNL</h2>
+        <p class="sec-desc">Mijn code en projecten in het openbaar.</p>
+      </div>
+
+      <div class="gh-stats">
+        <div class="gh-stat reveal"><div class="gh-num">🐙</div><div class="gh-lbl">GitHub profiel</div></div>
+        <div class="gh-stat reveal"><div class="gh-num" id="gh-repos">—</div><div class="gh-lbl">Public repositories</div></div>
+        <div class="gh-stat reveal"><div class="gh-num" id="gh-followers">—</div><div class="gh-lbl">Volgers</div></div>
+        <div class="gh-stat reveal"><div class="gh-num">VS Code</div><div class="gh-lbl">Favoriete editor</div></div>
+      </div>
+
+      <div class="repo-grid">
+        <a href="https://github.com/TechCentralNL" target="_blank" class="repo-card reveal">
+          <div class="repo-name">TechCentralNL</div>
+          <div class="repo-desc">Bekijk alle projecten en repositories op GitHub. Code, scripts en configuratiebestanden van alles wat ik bouw.</div>
+          <div class="repo-meta"><span><span class="ldot" style="background:#9a7c3a"></span>Shell</span><span>GitHub</span></div>
+        </a>
+        <div class="repo-card reveal">
+          <div class="repo-name">Portfolio Website</div>
+          <div class="repo-desc">De broncode van deze website. HTML, CSS en JavaScript, volledig handgeschreven zonder frameworks.</div>
+          <div class="repo-meta"><span><span class="ldot" style="background:#c4854a"></span>HTML/CSS</span><span>Public</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:2rem;text-align:center">
+        <a href="https://github.com/TechCentralNL" target="_blank" class="btn-gold">Bekijk GitHub →</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CONTACT STRIP -->
+<div class="contact-strip">
+  <p class="cs-text">Vraag of feedback? Stuur een bericht of volg <a href="https://www.tiktok.com/@quiethomeserver" target="_blank">@quiethomeserver</a></p>
+  <div class="cs-form">
+    <input class="cs-input" id="cmsg" type="text" placeholder="Je bericht of vraag...">
+    <button class="cs-btn" onclick="sendMsg()">Verstuur</button>
+    <span class="cs-ok" id="csok">Verstuurd ✓</span>
+  </div>
+</div>
+
+<script>
+  let cur = 'home';
+
+  function go(id) {
+    if (id === cur) return;
+    const overlay = document.getElementById('bubble-overlay');
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    const r = Math.sqrt(cx*cx + cy*cy) * 2.2;
+    const b = document.createElement('div');
+    b.className = 'bubble-circle';
+    b.style.cssText = `left:${cx}px;top:${cy}px;width:${r*2}px;height:${r*2}px;margin-left:-${r}px;margin-top:-${r}px;`;
+    overlay.appendChild(b);
+    requestAnimationFrame(() => {
+      b.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.5s ease';
+      b.style.transform = 'scale(1)'; b.style.opacity = '1';
+    });
+    setTimeout(() => {
+      document.getElementById('page-'+cur).classList.remove('active');
+      document.getElementById('page-'+id).classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.p === id));
+      window.scrollTo(0, 0);
+      cur = id;
+      setTimeout(reveal, 60);
+      if (id === 'skills') setTimeout(animBars, 400);
+      b.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease';
+      b.style.transform = 'scale(0)'; b.style.opacity = '0';
+      setTimeout(() => b.remove(), 450);
+    }, 300);
+  }
+
+  function reveal() {
+    document.querySelectorAll('#page-'+cur+' .reveal, #page-'+cur+' .log-entry').forEach((el,i) => {
+      setTimeout(() => el.classList.add('vis'), i * 70);
+    });
+  }
+
+  function animBars() {
+    document.querySelectorAll('.bar-fill').forEach(b => {
+      b.style.transform = `scaleX(${b.dataset.w})`;
+      b.classList.add('go');
+    });
+  }
+
+  function toggleMob() { document.getElementById('mobMenu').classList.toggle('open'); }
+
+  function sendMsg() {
+    const v = document.getElementById('cmsg').value.trim();
+    if (!v) return;
+    document.getElementById('cmsg').value = '';
+    const ok = document.getElementById('csok');
+    ok.style.display = 'inline';
+    setTimeout(() => ok.style.display = 'none', 3000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    reveal();
+    animBars();
+    new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); }), { threshold: 0.1 })
+      .observe && document.querySelectorAll('.reveal, .log-entry').forEach(el =>
+        new IntersectionObserver(([e]) => { if (e.isIntersecting) el.classList.add('vis'); }, { threshold: 0.1 }).observe(el)
+      );
+  });
+</script>
+</body>
+</html>
